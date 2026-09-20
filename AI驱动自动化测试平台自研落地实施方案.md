@@ -2,7 +2,7 @@
 
 > **技术路线**：以 N-Tester 为平台底座 + 深度融合 AI_Test_Agent 的 Agent 调度内核与 Playwright UI 执行引擎 + 自研补齐业务闭环
 >
-> **文档版本**：v1.2 ｜ **状态**：待评审  
+> **文档版本**：v1.3 ｜ **状态**：待评审
 >
 > 目录
 
@@ -53,15 +53,81 @@
 
 ### 1.3 预期收益
 
-| 指标 | 目标值 |
-| --- | --- |
-| 整体测试效率提升 | ≥ 70% |
-| 功能测试时间缩短 | ≥ 70% |
-| 测试覆盖率 | ≥ 90% |
-| 缺陷预测准确率提升 | ≥ 50% |
-| 用例准备效率提升 | ≥ 80% |
+本项目的收益不只体现在“测试执行更快”，还包括开发反馈前移、团队协作方式改善、质量治理标准化，以及集团范围内测试资产和工程能力的复用。以下目标值是一期试点建议值，正式立项后应以试点项目的基线数据重新校准。
 
-> 远期收益：推动测试岗从"执行者"向"质量策略设计者"升级，缺陷精准检出聚焦高风险区，全链路可观测可追溯，智能顾问辅助决策。
+#### 1.3.1 测试与质量收益
+
+| 收益方向 | 衡量指标 | 一期建议目标 | 长期价值 |
+| --- | --- | --- | --- |
+| 测试效率 | 整体测试准备与执行效率 | 提升 ≥ 70% | 将测试资源从重复执行转向风险分析、质量设计和专项验证 |
+| 回归效率 | 功能回归周期 | 缩短 ≥ 70% | 通过变更影响分析避免低价值全量回归，发布节奏更稳定 |
+| 测试覆盖 | 需求、接口、核心流程和高风险场景覆盖率 | ≥ 90% | 从“测过多少用例”转向“关键风险是否被覆盖” |
+| 用例准备 | 用例设计与脚本准备效率 | 提升 ≥ 80% | AI 负责初稿和扩展，测试人员聚焦规则校验和风险补充 |
+| 缺陷发现 | 缺陷提前发现比例 | 较现状提升 ≥ 30% | 将问题尽量暴露在提交、合并请求和部署验证阶段 |
+| 缺陷预测 | 高风险变更识别和缺陷预测准确率 | 提升 ≥ 50% | 逐步形成模块、接口和业务流程的风险画像 |
+| 线上质量 | 逃逸缺陷率、重复缺陷率、回归遗漏率 | 持续下降 | 用历史缺陷和失败模式反哺测试策略和用例资产 |
+| 测试稳定性 | 自动化用例稳定通过率、误报率、重跑率 | 稳定用例通过率 ≥ 95% | 降低“脚本本身不稳定”对研发和测试判断的干扰 |
+| 可追溯性 | 需求-代码-用例-执行-缺陷关联完整率 | ≥ 95% | 发生质量问题时能够还原决策依据和责任边界 |
+| 决策透明度 | 测试计划快照、策略版本和审批记录完整率 | 100% | 让 AI 测试决策可以审查、复盘、解释和回滚 |
+
+#### 1.3.2 开发岗位收益
+
+| 收益方向 | 对开发人员的帮助 |
+| --- | --- |
+| 更快获得反馈 | 代码提交后自动生成受影响范围测试，开发不必等待完整测试周期结束才知道问题 |
+| 降低排查成本 | 报告关联变更文件、调用链、接口、日志和失败证据，帮助开发快速定位问题位置 |
+| 减少重复工作 | 自动生成基础用例、接口调用、边界数据和回归脚本，开发把时间用于业务逻辑和架构改进 |
+| 提升代码质量 | 将静态检查、组件测试、契约测试、接口测试和部署后验证纳入统一质量门禁 |
+| 强化单元测试意识 | 平台可以接入开发侧 Pytest、JUnit、Go test 等结果，并展示单元测试覆盖和失败趋势 |
+| 降低返工风险 | API 契约、数据库迁移、权限和关键业务流程变更能够在合并前得到针对性验证 |
+| 支持 AI 编程治理 | 对 AI 生成代码增加依赖、权限、注入、数据一致性和回归检查，降低“生成即提交”的风险 |
+| 形成开发自助能力 | 开发人员可以查看受影响测试、手动补充测试范围、重跑失败用例和查看质量门禁原因 |
+
+#### 1.3.3 测试岗位与质量岗位收益
+
+- 测试人员从大量重复的手工执行中释放出来，更多参与风险建模、测试策略设计、质量门禁和专项测试；
+- 测试经验不再只存在于个人脑中，而是沉淀为风险标签、测试策略、用例属性、脚本、历史缺陷和决策记录；
+- 新成员可以通过系统基线、用例模板、历史报告和知识库快速了解业务，降低培训和交接成本；
+- 测试工作由“按模块列清单”升级为“按变更风险选择测试”，提高测试资源投入的准确性；
+- 可以用统一指标衡量覆盖率、漏测、误报、自动化稳定性、推荐命中率和回归效率，减少主观评价；
+- 复杂专项测试可以逐步纳入统一平台，形成接口、UI、APP、性能、安全、数据和 AI 专项的协同质量视图。
+
+#### 1.3.4 团队协作收益
+
+| 协作对象 | 预期收益 |
+| --- | --- |
+| 开发与测试 | 通过同一份测试计划快照、执行结果和决策记录协作，减少“开发认为改动很小、测试认为风险很大”的信息差 |
+| 产品与业务 | 通过需求、业务流程、风险标签和验收结果关联，能够看到功能变更对核心业务链路的影响 |
+| 测试与运维 | 将部署后冒烟、健康检查、回滚验证、日志和环境状态纳入同一流程，缩短上线验证和故障定位时间 |
+| 架构与安全 | 对接口契约、数据链路、权限边界、依赖服务和安全风险形成统一检查入口 |
+| 项目管理 | 通过任务状态、测试成本、缺陷趋势和质量门禁结果掌握项目交付风险，而不只看测试是否“执行完成” |
+| 组织知识管理 | 将不同项目的高质量用例、风险规则和失败模式沉淀为可复用资产，减少重复建设 |
+
+#### 1.3.5 对集团及长期经营的收益
+
+- **质量治理统一化**：集团可以建立统一的测试资产模型、风险标签、质量指标、审批机制和审计口径，减少各业务线各自为战；
+- **测试能力平台化**：成熟的接口、UI、APP、数据、性能、安全和 AI 测试能力可以按项目复用，降低重复采购和重复开发成本；
+- **核心风险可视化**：管理层可以从业务线、系统、版本、模块、接口和风险等级多个维度查看质量状态，提前识别交付风险；
+- **研发交付可预测**：通过历史测试耗时、缺陷趋势、变更规模和风险等级估算交付成本，辅助排期、资源和发布决策；
+- **工程资产持续增值**：每次执行都会为用例、脚本、缺陷、策略和知识库积累数据，平台能力随使用规模增长而增强；
+- **降低对个人经验的依赖**：关键测试经验通过规则、标签、流程和审计记录固化，减少人员流动对项目质量的影响；
+- **支撑集团审计与合规**：高风险变更、测试结果、人工审批、策略版本和缺陷关闭过程可追溯，便于内审、外审和事故复盘；
+- **促进 AI 工程化落地**：把 AI 生成代码、AI 应用、RAG、工具调用和本地模型纳入可测试、可评估、可审计的工程流程；
+- **形成质量数据资产**：集团可以基于跨项目数据分析高频缺陷、薄弱模块、常见变更风险和自动化收益，为技术治理提供依据；
+- **长期成本优化**：减少重复手工回归、重复脚本编写、重复环境验证和重复缺陷排查，将投入集中到高价值质量活动；
+- **支持业务规模扩张**：当系统数量、开发人员和交付频率增长时，平台通过规则、调度和执行节点扩展能力，而不是线性增加测试人力；
+- **沉淀集团级技术竞争力**：将测试平台、AI Agent、领域知识和质量数据结合，形成可持续迭代的内部工程能力。
+
+#### 1.3.6 远期收益总结
+
+远期来看，平台将推动质量工作从“项目末端的测试活动”转变为贯穿需求、设计、开发、提交、部署和运营的工程能力：
+
+1. 对开发岗位，形成更早、更快、更具体的质量反馈，减少返工和线上问题排查；
+2. 对测试岗位，推动角色从重复执行者转向质量策略设计者、风险分析者和自动化资产建设者；
+3. 对项目团队，建立开发、测试、产品、运维和安全共享的质量事实和协作语言；
+4. 对各业务线，复用集团沉淀的测试能力、规则和知识，缩短新系统接入和新成员上手时间；
+5. 对集团管理，形成跨系统、跨项目、跨业务线的质量数据和风险治理视图；
+6. 对长期技术发展，构建可持续训练和评估的 AI 测试能力，逐步实现“规则可控、AI 可用、结果可审计、经验可复用”。
 
 ### 1.4 建设分期：一期与二期
 
@@ -1259,9 +1325,87 @@ gantt
 
 ### 12.2 参考链接
 
-- AI_Test_Agent 源码：https://github.com/ywq2019/ai_test_agent
-- AI_Test_Agent 设计思路：https://github.com/ywq2019/ai_test_agent/blob/master/DESIGN.md
-- N-Tester 源码：https://github.com/rebort-hub/ntest
+本节链接按“项目来源、平台技术、测试执行、工程集成、安全治理、可观测性和 AI 评测”分类。链接主要用于方案论证、技术选型和后续落地开发，不代表一期必须全部引入。
+
+#### 12.2.1 现有项目与融合参考
+
+- [AI_Test_Agent 源码](https://github.com/ywq2019/ai_test_agent)：Agent 调度、Playwright 执行、接口执行和 Prompt 外部化参考
+- [AI_Test_Agent 设计思路](https://github.com/ywq2019/ai_test_agent/blob/master/DESIGN.md)：理解 Agent、用例生成和执行链路
+- [N-Tester 源码](https://github.com/rebort-hub/ntest)：平台底座、需求/用例/报告/权限等模块参考
+- [GitHub Webhooks 文档](https://docs.github.com/en/webhooks)：代码提交、合并请求和发布事件接入参考
+- [GitHub REST API 文档](https://docs.github.com/en/rest)：仓库、提交、差异和检查结果读取参考
+
+#### 12.2.2 后端、前端与基础设施
+
+- [FastAPI 官方文档](https://fastapi.tiangolo.com/)：异步 API、依赖注入和接口服务开发
+- [Pydantic 官方文档](https://docs.pydantic.dev/latest/)：请求模型、配置模型和结构化数据校验
+- [Vue 3 官方文档](https://vuejs.org/guide/introduction.html)：前端页面和管理台开发
+- [Element Plus 官方文档](https://element-plus.org/en-US/)：管理后台组件和交互控件
+- [PostgreSQL 官方文档](https://www.postgresql.org/docs/)：业务数据、策略、任务和审计数据存储
+- [Tortoise ORM 官方文档](https://tortoise.github.io/)：N-Tester 现有异步 ORM 参考
+- [Redis 官方文档](https://redis.io/docs/latest/)：缓存、任务队列、执行状态和分布式锁
+- [Qdrant 官方文档](https://qdrant.tech/documentation/)：向量检索、混合检索和知识库实现
+- [Docker 官方文档](https://docs.docker.com/)：本地开发、中间件和服务部署
+- [Docker Compose 文档](https://docs.docker.com/compose/)：一期多服务联调和测试环境编排
+- [Kubernetes 官方文档](https://kubernetes.io/docs/home/)：规模化执行节点和多环境隔离的远期参考
+- [APScheduler 文档](https://apscheduler.readthedocs.io/en/3.x/)：定时任务、周期巡检和后台自迭代任务
+
+#### 12.2.3 Agent、模型与知识库
+
+- [LangGraph 官方文档](https://docs.langchain.com/oss/python/langgraph/overview)：状态机、条件路由、暂停恢复和人工介入编排
+- [LangChain 官方文档](https://docs.langchain.com/oss/python/langchain/overview)：工具调用、模型适配和 Agent 组件参考
+- [Model Context Protocol 官方文档](https://modelcontextprotocol.io/introduction)：MCP 工具接入和上下文交换规范
+- [Ollama 官方文档](https://docs.ollama.com/)：本地模型部署和模型管理参考
+- [vLLM 官方文档](https://docs.vllm.ai/en/latest/)：本地大模型推理、并发和吞吐优化参考
+- [Hugging Face Transformers 文档](https://huggingface.co/docs/transformers/index)：模型加载、推理和评测组件参考
+- [Ragas 文档](https://docs.ragas.io/)：RAG 检索质量和生成质量评测参考
+- [Promptfoo 文档](https://www.promptfoo.dev/docs/)：Prompt、模型输出和安全测试的对比评测参考
+
+#### 12.2.4 测试执行与自动化
+
+- [Playwright Python 官方文档](https://playwright.dev/python/docs/intro)：WebUI 自动化、浏览器上下文、断言和多浏览器执行
+- [Playwright Test 文档](https://playwright.dev/docs/intro)：测试发现、并发、报告和重试机制参考
+- [pytest 官方文档](https://docs.pytest.org/en/stable/)：Python 单元/组件/接口测试和插件体系
+- [Appium 官方文档](https://appium.io/docs/en/latest/)：APP 自动化、设备连接和移动端执行
+- [HTTPX 文档](https://www.python-httpx.org/)：异步接口调用和接口执行器实现
+- [Locust 官方文档](https://docs.locust.io/en/stable/)：接口负载、并发和性能测试参考
+- [Allure Report 文档](https://allurereport.org/docs/)：测试结果、附件、趋势和报告可视化参考
+- [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)：接口契约、接口采集和契约测试依据
+- [ISTQB Glossary](https://glossary.istqb.org/)：测试术语、测试层级和测试活动定义参考
+
+#### 12.2.5 CI/CD 与研发流程集成
+
+- [GitHub Actions 官方文档](https://docs.github.com/en/actions)：提交、合并请求、部署和质量门禁集成
+- [Jenkins Pipeline 文档](https://www.jenkins.io/doc/book/pipeline/)：企业内部 CI/CD 流水线和审批节点参考
+- [GitLab CI/CD 文档](https://docs.gitlab.com/ee/ci/)：GitLab 环境下的流水线、变量和制品管理参考
+- [Argo CD 文档](https://argo-cd.readthedocs.io/en/stable/)：Kubernetes 环境持续交付和部署后验证参考
+- [Semantic Versioning](https://semver.org/)：测试资产、策略和平台组件版本管理参考
+
+#### 12.2.6 安全、质量与合规
+
+- [OWASP API Security Top 10](https://owasp.org/API-Security/)：API 认证、授权、越权、注入和资源滥用风险
+- [OWASP Application Security Verification Standard](https://owasp.org/www-project-application-security-verification-standard/)：应用安全验证项和安全质量门禁参考
+- [OWASP Web Security Testing Guide](https://owasp.org/www-project-web-security-testing-guide/)：Web 安全测试方法和测试场景参考
+- [OWASP Top 10 for Large Language Model Applications](https://owasp.org/www-project-top-10-for-large-language-model-applications/)：提示注入、越权工具调用、数据泄露和模型应用安全参考
+- [NIST Secure Software Development Framework](https://csrc.nist.gov/Projects/ssdf)：将安全活动纳入研发和交付流程
+- [NIST AI Risk Management Framework](https://www.nist.gov/itl/ai-risk-management-framework)：AI 系统风险识别、治理、度量和管理参考
+- [OWASP Dependency-Check](https://owasp.org/www-project-dependency-check/)：第三方依赖漏洞识别参考
+
+#### 12.2.7 可观测性、日志与运行治理
+
+- [OpenTelemetry 官方文档](https://opentelemetry.io/docs/)：Trace、Metric、Log 统一采集和跨服务关联
+- [Prometheus 官方文档](https://prometheus.io/docs/introduction/overview/)：测试执行节点、服务和任务指标采集
+- [Grafana 官方文档](https://grafana.com/docs/grafana/latest/)：执行趋势、质量指标和运行看板
+- [Elasticsearch 官方文档](https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html)：日志检索、失败聚类和历史数据查询
+- [Sentry 文档](https://docs.sentry.io/)：应用异常、堆栈和发布版本关联参考
+
+#### 12.2.8 AI 评测与质量治理
+
+- [OpenAI Evals 指南](https://platform.openai.com/docs/guides/evals)：模型输出评测、数据集、评分标准和回归评测思路
+- [OpenAI 安全最佳实践](https://platform.openai.com/docs/guides/safety-best-practices)：模型应用安全控制和风险防护参考
+- [MLCommons MLPerf Inference](https://mlcommons.org/benchmarks/inference/)：模型推理吞吐、延迟和硬件性能评测参考
+- [Google Model Cards](https://modelcards.withgoogle.com/about)：模型能力、限制、适用范围和风险说明参考
+- [Microsoft Responsible AI](https://www.microsoft.com/en-us/ai/responsible-ai)：负责任 AI、治理和风险控制参考
 
 ### 12.3 术语表
 
