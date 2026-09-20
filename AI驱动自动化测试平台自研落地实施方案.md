@@ -2,7 +2,7 @@
 
 > **技术路线**：以 N-Tester 为平台底座 + 深度融合 AI_Test_Agent 的 Agent 调度内核与 Playwright UI 执行引擎 + 自研补齐业务闭环
 >
-> **文档版本**：v1.3 ｜ **状态**：待评审
+> **文档版本**：v1.4 ｜ **状态**：待评审
 >
 > 目录
 
@@ -1334,6 +1334,59 @@ gantt
 - [N-Tester 源码](https://github.com/rebort-hub/ntest)：平台底座、需求/用例/报告/权限等模块参考
 - [GitHub Webhooks 文档](https://docs.github.com/en/webhooks)：代码提交、合并请求和发布事件接入参考
 - [GitHub REST API 文档](https://docs.github.com/en/rest)：仓库、提交、差异和检查结果读取参考
+
+下面这些开源项目与本平台的目标能力更接近，建议作为“源码阅读和架构借鉴对象”。它们不是全部直接合并进 N-Tester，而是分别借鉴编排、执行、数据采集、隔离、报告和扩展机制。真正采用前仍需要单独进行许可证、依赖、数据安全和二次开发成本评估。
+
+##### 12.2.1.1 测试平台、任务编排与结果治理
+
+- [Testkube 源码](https://github.com/kubeshop/testkube)：面向 Kubernetes 的开放测试平台，支持把 API、E2E、性能、安全和基础设施测试统一定义、触发、执行和分析；可重点参考其 Agent/执行器、测试工作流、Webhook/REST/MCP 触发、结果与制品聚合、资源指标和多集群部署思路。对应本方案的测试编排服务、分布式执行集群、报告中心和后期规模化部署。
+- [Keploy 源码](https://github.com/keploy/keploy)：通过网络层/eBPF 记录真实 API 调用、数据库交互和流式事件，再生成测试与 Mock 并进行确定性回放；可重点参考其录制-生成-回放-覆盖率闭环、外部依赖隔离、Mock 注册和 CI 集成。对应本方案的接口采集、代码接入缺口补测、数据准备和集成测试资产生成。
+- [Robot Framework 源码](https://github.com/robotframework/robotframework)：关键字驱动和可扩展测试框架，支持验收测试、ATDD、数据驱动和自定义库；可重点参考测试套件/关键字/监听器/插件分层，让非开发人员也能维护部分业务流程。对应本方案的自然语言步骤、业务流程用例、测试库插件和人工可读报告。
+- [Gauge 源码](https://github.com/getgauge/gauge)：以 Markdown 规格描述业务验收场景，并通过步骤实现和数据表复用测试逻辑；可重点参考“业务规格与执行实现分离”、步骤实现复用和多语言插件机制。对应本方案的需求-用例关联、验收测试和业务人员参与维护。
+- [Allure 2 源码](https://github.com/allure-framework/allure2)：测试结果模型和报告生成框架，支持步骤、附件、标签、历史趋势和多种适配器；可重点参考统一测试结果协议、截图/日志/视频附件、历史趋势和失败详情。对应本方案的跨 UI/API/APP/专项执行器结果统一与报告看板。
+
+##### 12.2.1.2 Web/UI 自动化与 AI 浏览器 Agent
+
+- [Playwright 源码](https://github.com/microsoft/playwright)：跨浏览器自动化和浏览器上下文隔离的核心实现；可重点参考 Browser/Context/Page 分层、网络拦截、Trace、视频、并行执行和多浏览器适配。对应本方案的 WebUI 执行引擎、登录态快照、Selector 回退和并发控制。
+- [Selenium 源码](https://github.com/SeleniumHQ/selenium)：基于 W3C WebDriver 的浏览器自动化生态，包含多语言客户端、Driver 管理和 Selenium Grid；可重点参考 Grid 的路由、Session 管理、节点注册、浏览器能力匹配和远程执行。对应本方案的浏览器执行节点池、跨浏览器调度和老系统兼容兜底。
+- [Taiko 源码](https://github.com/getgauge/taiko)：Node.js 浏览器自动化库，提供智能选择器、录制/编写/运行测试和较高可读性的 API；可重点参考智能 Selector、交互录制、等待策略和面向业务的操作抽象。对应本方案的 UI 录制器、自然语言步骤转换和脚本健壮化。
+- [Browser Use 源码](https://github.com/browser-use/browser-use)：开源浏览器 Agent，使用 LLM 规划网页操作并支持 Python/TypeScript、本地运行、浏览器状态和任务基准；可重点参考 Agent 与 Browser/Controller/Tools 分层、页面状态压缩、长流程任务恢复和浏览器 Agent 评测。对应本方案的 AI UI 场景规划、动态页面理解和复杂流程探索性测试，但确定性回归仍应由 Playwright 等执行器完成。
+- [agent-browser 源码](https://github.com/vercel-labs/agent-browser)：面向 AI Agent 的浏览器自动化 CLI，采用 Rust CLI + 常驻 Daemon + Chrome DevTools Protocol，并提供紧凑的可访问性树快照、元素引用、会话、录制、调试和 MCP；可重点参考“低上下文输出 + 稳定元素引用 + 有状态会话 + MCP 工具暴露”的 Agent 浏览器架构。对应本方案的 AI 测试操作工具层和 MCP 浏览器执行适配器。
+
+##### 12.2.1.3 API、契约、Mock 与集成测试
+
+- [Karate 源码](https://github.com/karatelabs/karate)：把 API 测试、Mock、性能测试和 UI 自动化放在统一框架中，并提供 DSL、JSON/XML 断言、数据驱动和并行执行；可重点参考 DSL/运行时/断言/Mock/报告的组合方式。对应本方案的接口测试、业务流程测试和专项执行器，但平台仍保留 UI、API 和性能引擎职责分离。
+- [Newman 源码](https://github.com/postmanlabs/newman)：Postman Collection 的命令行执行器，支持 CI 集成、库调用、变量、多个 Reporter 和 JUnit/JSON 等结果格式；可重点参考 Collection Runner、CLI 参数、事件总线、Reporter 插件和 CI 退出码。对应本方案的接口用例导入、接口计划执行和外部测试工具适配。
+- [Pact JS 源码](https://github.com/pact-foundation/pact-js)：消费者驱动契约测试框架，消费者先定义 API 假设并生成契约，提供者再根据契约验证实现；可重点参考 Consumer Test、Provider Verification、契约文件、Broker 和消息契约。对应本方案的 API 契约变更识别、上下游影响分析和合并请求质量门禁。
+- [WireMock 源码](https://github.com/wiremock/wiremock)：服务虚拟化和 API Mock 框架，支持请求匹配、响应桩、录制、代理、场景状态、请求日志和管理 API；可重点参考 Mock Server、Stub Mapping、Scenario State、Request Journal 和扩展点。对应本方案的第三方依赖隔离、接口异常数据构造和离线集成测试环境。
+- [MockServer 源码](https://github.com/mock-server/mockserver)：可编程 HTTP/HTTPS Mock、代理和验证服务，适合模拟第三方接口、异常响应、延迟和网络故障；可重点参考独立 Mock 服务、Expectation、Verification 和代理链路。对应本方案的外部系统隔离、故障注入和接口回归环境。
+
+##### 12.2.1.4 移动端、性能与安全专项测试
+
+- [Appium 源码](https://github.com/appium/appium)：基于 WebDriver 的跨平台移动端自动化框架，采用 Server、Driver、Client、Plugin 的模块化扩展架构；可重点参考驱动安装/管理、设备会话、并发 Session 和插件机制。对应本方案的 APP 执行节点、设备管理和移动端执行器扩展。
+- [Grafana k6 源码](https://github.com/grafana/k6)：以代码描述负载模型的性能测试工具，支持 HTTP、WebSocket、gRPC、Browser、多种负载模型、阈值和指标输出；可重点参考脚本即测试资产、Executor 负载模型、Threshold 质量门禁、Metrics 输出和扩展系统。对应本方案的性能计划、TPS/P95/P99 指标、预算控制和发布前性能基线。
+- [Apache JMeter 源码](https://github.com/apache/jmeter)：支持 Web、REST、数据库、消息、TCP 等协议的性能测试工具，提供 GUI 计划编辑、非 GUI 执行、远程执行、插件化 Sampler 和 HTML 报告；可重点参考 Test Plan、Thread Group、Sampler、Listener、远程执行和报告模型。对应本方案的传统压测兼容、复杂协议支持和专项执行器接入。
+- [OWASP ZAP 源码](https://github.com/zaproxy/zaproxy)：可扩展的 Web 安全测试代理，支持被动扫描、主动扫描、爬虫、API、脚本和插件扩展；可重点参考 Context/Scope、扫描策略、规则插件、报告和自动化 API。对应本方案的授权安全测试、API 安全扫描和发布前安全门禁。
+
+##### 12.2.1.5 测试平台架构借鉴对照
+
+| 本平台能力 | 优先参考项目 | 可借鉴的架构点 | 在本方案中的落点 |
+| --- | --- | --- | --- |
+| 测试编排与分布式执行 | Testkube、Selenium Grid | 任务触发、执行器注册、节点能力匹配、任务重试、结果聚合 | 4.4 智能测试编排 + 4.3 执行调度 |
+| 真实流量生成测试 | Keploy | 真实流量录制、依赖 Mock、测试生成、回放和覆盖率 | 4.1 接口采集 + 4.2 用例生成 |
+| 业务可读测试资产 | Robot Framework、Gauge、Karate | 关键字/步骤/规格与执行实现分离，业务人员可读 | 3.2.8 多维测试资产 + 4.2 用例管理 |
+| AI 浏览器操作 | Browser Use、agent-browser、Playwright | 页面状态理解、紧凑上下文、稳定引用、Agent 工具和确定性执行分层 | 3.2.1 Agent 内核 + 3.2.2 Playwright 引擎 |
+| 接口契约与依赖隔离 | Pact、WireMock、MockServer | 消费者契约、提供者验证、Stub、录制、场景状态和请求校验 | 3.2.9 影响分析 + 4.3 接口执行 |
+| 性能质量门禁 | k6、JMeter | 负载模型、阈值、远程执行、指标输出和 HTML 报告 | 4.3 性能执行器 + 5.2 发布阶段策略 |
+| 安全专项扫描 | OWASP ZAP | 扫描上下文、授权范围、规则插件、API 自动化和报告 | 4.3 安全测试 + 3.2.10 策略门禁 |
+
+**借鉴边界**：
+
+1. Testkube、Selenium Grid 等项目适合借鉴执行编排和节点管理，但本平台的“变更影响分析、测试策略匹配和测试计划快照”仍需自研；
+2. Keploy、Pact、WireMock 等项目适合补强接口、契约和依赖隔离能力，不替代本平台的多维测试资产模型；
+3. Browser Use 和 agent-browser 适合用于 AI 探索、自然语言操作和复杂页面理解，不应直接替代 Playwright 的确定性回归执行；
+4. k6、JMeter、OWASP ZAP 作为专项执行器接入，由策略中心控制触发，不能让高成本或破坏性测试被普通代码提交无条件触发；
+5. 所有开源项目在正式引入前需要核对许可证、依赖传递、漏洞公告、数据出域和集团内部合规要求。
 
 #### 12.2.2 后端、前端与基础设施
 
